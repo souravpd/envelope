@@ -1,5 +1,12 @@
 # Envelope
-This is an implementation of a simple compiler for a templating engine for my Blog. It uses a JSON inspired syntax
+Building a Templating Engine inspired by steve kinney's course on DropBear 
+
+### What is a compiler?
+Something that turns a higher-level language to a lower-language language
+The stages of a compiler are
+- Parsing: Take the source code and turn it into a repesentation of that code
+- Transformation: Take the source code and transforms it to do whatever the compiler wants it to do.
+- Generation: Take the transformed representation and turns it into a new string of code 
 
 ### Grammar Rules
 ```python
@@ -23,7 +30,7 @@ This is an implementation of a simple compiler for a templating engine for my Bl
         ),
         subheading:"Explanation of the Code",
         image: backgorund.png "This is the alternate text", 
-        list:[
+        v-list:[
             "This is a list item",
             "This is another list item",
         ],     
@@ -31,7 +38,7 @@ This is an implementation of a simple compiler for a templating engine for my Bl
             (done:False "This is the task"), 
             (done:True "This is the task")
         ],
-        para: "This is some (highlight: "random explanation") for the code that has been written for more information you (image: "image.jpeg" "alternate-text")",
+        para: "This is some (highlight: "random explanation") for the code that has been written for more information",
     ]
 ]
 """
