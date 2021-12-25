@@ -8,38 +8,19 @@ The stages of a compiler are
 - Transformation: Take the source code and transforms it to do whatever the compiler wants it to do.
 - Generation: Take the transformed representation and turns it into a new string of code 
 
+
 ### Grammar Rules
 ```python
 """
-[
-    layout:post,
-    title: "Two Sum Problem in LeetCode",
-    slug:"two-sum",
-    heading:"Two Sum",
-    body:
-    [
-        para:"This is an (bold:"implementation") of the popular (link: https://leetcode.com/problems/two-sum "Two-Sum") Problem in LeetCode",
-        code:(
-            def two_sum(self , nums , target):
-                map = {}
-                for index , num in enumerate(nums):
-                    complement = target - nums
-                    if map.get(complement , -1) != -1:
-                        return [index , map.get(complement)]
-                    map[num] = index
-        ),
-        subheading:"Explanation of the Code",
-        image: backgorund.png "This is the alternate text", 
-        v-list:[
-            "This is a list item",
-            "This is another list item",
-        ],     
-        task-list:[
-            (done:False "This is the task"), 
-            (done:True "This is the task")
-        ],
-        para: "This is some (highlight: "random explanation") for the code that has been written for more information",
-    ]
-]
+layout:post;
+title:Two Sum Problem in LeetCode;
+slug:two-sum;
+heading:Two Sum;
+para:This is an [bold(implementation)] of the popular [link(https://leetcode.com/problems/two-sum Two-Sum)] Problem in LeetCode;
+subheading:Explanation of the Code;
+image:[path(backgorund.png This is the alternate text)];
+list:This is a list item,This is another list item;
+task-list:[False(This is the task)],[True(This is another task)];
+para:This is some [highlight(random explanation)] for the code that has been written for more information;
 """
 ```
