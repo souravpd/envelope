@@ -1,7 +1,7 @@
 category:Mineral-Engineering;
 title:What is Mineral Engineering;
 slug:Mineral-Engineering-introduction;
-heading:What is [@highlight(@bold(What is Mineral Engineering?))];
+heading:What is [@highlight(@bold(Mineral Engineering?))];
 subheading:What is a Mineral?;
 para:A Mineral is an [@highlight(@bold(naturally occuring inorganic substance having fixed chemical composition and structure))];
 subheading:What is Mineral Engineering?;

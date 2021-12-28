@@ -11,7 +11,7 @@ import re
 
 class Parser:
     # takes in an input string and returns an array of tokens
-    def parse(self,input):
+    def parse(self, input):
         # remove the trailing whitespaces
         input = input.strip()
         # replace all newlines

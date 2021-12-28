@@ -5,7 +5,6 @@ A very basic implementation of a generator to generate the body of each post
 A Generator takes the list of tokens and transforms it into HTML
 """
 
-
 class CodeGenerator:
     # Constructor takes in the array of tokens returned by the parser.parse
     def __init__(self, tokens):
@@ -63,7 +62,7 @@ class CodeGenerator:
         # handle the nested modifiers
         text = self.handle_modifiers(text)
         # Generate Navigation Data
-        self.navigation.append((self.subheading_id , text , []))
+        self.navigation.append((self.subheading_id, text, []))
         self.subsubheading_id = 0
         self.body = self.body + f"<h3 id='{self.subheading_id}'>{text}</h3>"
         self.subheading_id = self.subheading_id + 1
@@ -73,8 +72,10 @@ class CodeGenerator:
         # handle the nested modifiers
         text = self.handle_modifiers(text)
         # Generate Navigation Data
-        self.navigation[self.subheading_id-1][2].append((self.subsubheading_id , text))
-        self.body = self.body + f"<h5 id='{self.subheading_id-1}.{self.subsubheading_id}'>{text}</h5>"
+        self.navigation[self.subheading_id -
+                        1][2].append((self.subsubheading_id, text))
+        self.body = self.body + \
+            f"<h5 id='{self.subheading_id-1}.{self.subsubheading_id}'>{text}</h5>"
         self.subsubheading_id = self.subsubheading_id + 1
 
     # generate the images
@@ -175,23 +176,25 @@ class CodeGenerator:
                 cursor = cursor + 1
         return final_text
 
-
     # Handle Internal Navigation
+
     def handle_internal_navigation(self):
         data = f"<details><summary>Internal Navigation for {self.title}</summary><ol>"
-        for id,name,sections in self.navigation:
+        for id, name, sections in self.navigation:
             data = data + f"<a href='#{id}'><li>{name}</li></a>"
             if len(sections) != 0:
                 data = data + "<ol>"
-                for sub_id , sub_name in sections:
-                    data = data + f"<a href='#{id}.{sub_id}'><li>{sub_name}</li></a>"
+                for sub_id, sub_name in sections:
+                    data = data + \
+                        f"<a href='#{id}.{sub_id}'><li>{sub_name}</li></a>"
                 data = data + "</ol>"
         data = data + "</ol></details>"
         self.body = data + self.body
-    
+
     # This is the entry point of this generator
     # We loop over the tokens array and generate the html elements depending upon the type
-    def get_body(self):
+    def get_document(self):
+        # Add the Data in the Body
         for token in self.tokens:
             # token[0] is the type
             # token[1] is the value
@@ -217,8 +220,30 @@ class CodeGenerator:
                 self.handle_task_list(token[1])
             else:
                 print("Undefined Type")
-
-        # now the body has been generated next we need to add the head section and the headers and footers
         # Add the navigation
         self.handle_internal_navigation()
-        return (self.category, self.title, self.slug, self.body)
+
+        # Add the Header
+        document = f"""
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+            <title>~/souravpd: {self.title}</title>
+        </head>
+        <body>
+            <a href="#"><h2>~/souravpd</h2></a>
+        <main>
+        <article>
+        {self.body}
+        </article>
+        </main>
+        <footer>
+            <p>Sourav Prasad</p>
+        </footer>
+        </body>
+        </html>
+        """
+        return (self.category, self.title, self.slug, document)
