@@ -1,11 +1,9 @@
 """
 code_generator.py 
 Sourav Prasad
-A very basic implementation of a generator
+A very basic implementation of a generator to generate the body of each post
 A Generator takes the list of tokens and transforms it into HTML
 """
-
-# Encapsulate the entire functionality into a class
 
 
 class CodeGenerator:
@@ -18,10 +16,27 @@ class CodeGenerator:
         self.slug = ""
         # body of the entire html document
         self.body = ""
+        # Category under which this post appears
+        self.category = ""
+        # navigation data
+        """
+        Heading
+        1. SubHeading
+            1.1 SubSubheading
+            1.2 SubSubheading
+            1.3 SubSubheading
+        2. SubHeading
+            2.1 SubSubHeading
 
-    # todo
-    def handle_layout(self, text):
-        pass
+        Representation
+        [(subheading_id , subheading , [(subsubheading_id) , (subsubheading) , (subsubheading_id , subsubheading)])]
+        """
+        self.navigation = []
+        self.subheading_id = 0
+        self.subsubheading_id = 0
+
+    def handle_category(self, text):
+        self.category = text
 
     # store the title of the page
     def handle_title(self, text):
@@ -47,7 +62,20 @@ class CodeGenerator:
     def handle_subheading(self, text):
         # handle the nested modifiers
         text = self.handle_modifiers(text)
-        self.body = self.body + f"<h3>{text}</h3>"
+        # Generate Navigation Data
+        self.navigation.append((self.subheading_id , text , []))
+        self.subsubheading_id = 0
+        self.body = self.body + f"<h3 id='{self.subheading_id}'>{text}</h3>"
+        self.subheading_id = self.subheading_id + 1
+
+     # generate the subsubheadings
+    def handle_subsubheading(self, text):
+        # handle the nested modifiers
+        text = self.handle_modifiers(text)
+        # Generate Navigation Data
+        self.navigation[self.subheading_id-1][2].append((self.subsubheading_id , text))
+        self.body = self.body + f"<h5 id='{self.subheading_id-1}.{self.subsubheading_id}'>{text}</h5>"
+        self.subsubheading_id = self.subsubheading_id + 1
 
     # generate the images
     def handle_image(self, text):
@@ -147,14 +175,28 @@ class CodeGenerator:
                 cursor = cursor + 1
         return final_text
 
+
+    # Handle Internal Navigation
+    def handle_internal_navigation(self):
+        data = f"<details><summary>Internal Navigation for {self.title}</summary><ol>"
+        for id,name,sections in self.navigation:
+            data = data + f"<a href='#{id}'><li>{name}</li></a>"
+            if len(sections) != 0:
+                data = data + "<ol>"
+                for sub_id , sub_name in sections:
+                    data = data + f"<a href='#{id}.{sub_id}'><li>{sub_name}</li></a>"
+                data = data + "</ol>"
+        data = data + "</ol></details>"
+        self.body = data + self.body
+    
     # This is the entry point of this generator
     # We loop over the tokens array and generate the html elements depending upon the type
-    def result(self):
+    def get_body(self):
         for token in self.tokens:
             # token[0] is the type
             # token[1] is the value
-            if token[0] == "layout":
-                self.handle_layout(token[1])
+            if token[0] == "category":
+                self.handle_category(token[1])
             elif token[0] == "title":
                 self.handle_title(token[1])
             elif token[0] == "slug":
@@ -165,6 +207,8 @@ class CodeGenerator:
                 self.handle_para(token[1])
             elif token[0] == "subheading":
                 self.handle_subheading(token[1])
+            elif token[0] == "subsubheading":
+                self.handle_subsubheading(token[1])
             elif token[0] == "image":
                 self.handle_image(token[1])
             elif token[0] == "list":
@@ -175,35 +219,6 @@ class CodeGenerator:
                 print("Undefined Type")
 
         # now the body has been generated next we need to add the head section and the headers and footers
-
-        return
-    
-    def get_document(self):
-        self.result()
-        final_html_document = f"""
-        <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="utf-8">
-                <meta name="author" content="Sourav Prasad">
-                <title>~/souravpd:{self.title}</title>
-                <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
-                <!-- the below three lines are a fix to get HTML5 semantic elements working in old versions of Internet Explorer-->
-                <!--[if lt IE 9]>
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
-                <![endif]-->
-            </head>
-            <body>
-                <h2><a href="#">~/souravpd</a></h2>
-                <main>
-                    <article>
-                    {self.body}
-                    </article>
-                </main>
-                <footer>
-                    <p>©Copyright 2050 by nobody. All rights reversed.</p>
-                </footer>
-            </body>
-            </html>
-        """
-        return final_html_document
+        # Add the navigation
+        self.handle_internal_navigation()
+        return (self.category, self.title, self.slug, self.body)
